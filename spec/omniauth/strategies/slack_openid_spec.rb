@@ -66,6 +66,28 @@ describe OmniAuth::Strategies::SlackOpenid do
 
     subject { strategy.uid }
 
-    it { expect(subject).to eq('T0R7GR-U0R7JM') }
+    it { expect(subject).to eq('U0R7JM-T0R7GR') }
+  end
+
+  describe '#callback_url' do
+    let(:base_url) { 'https://example.com' }
+
+    context 'no script name present' do
+      it 'has the correct default callback path' do
+        allow(subject).to receive(:full_host) { base_url }
+        allow(subject).to receive(:script_name) { '' }
+        allow(subject).to receive(:query_string) { '' }
+        expect(subject.callback_url).to eq(base_url + '/auth/slack_openid/callback')
+      end
+    end
+
+    context 'script name' do
+      it 'should set the callback path with script_name' do
+        allow(subject).to receive(:full_host) { base_url }
+        allow(subject).to receive(:script_name) { '/v1' }
+        allow(subject).to receive(:query_string) { '' }
+        expect(subject.callback_url).to eq(base_url + '/v1/auth/slack_openid/callback')
+      end
+    end
   end
 end
