@@ -30,7 +30,7 @@ module OmniAuth
       option :redirect_uri
 
       def self.generate_uid(team_id, user_id)
-        "#{team_id}-#{user_id}"
+        "#{user_id}-#{team_id}"
       end
 
       uid do
