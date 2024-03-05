@@ -72,7 +72,7 @@ module OmniAuth
 
       def raw_info
         @raw_info ||= begin
-          data = access_token.get("/api/openid.connect.userInfo").parsedd
+          data = access_token.get("/api/openid.connect.userInfo").parsed
           # For Slack Enterprise team_id is not returned in the userinfo response
           data[:team_id] = JWT.decode(JSON.parse(access_token.response.body).dig('id_token'), nil, false).dig(0, 'https://slack.com/team_id') unless data[:team_id].present?
           data
