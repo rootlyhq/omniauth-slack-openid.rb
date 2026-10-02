@@ -29,6 +29,8 @@ module OmniAuth
 
       option :redirect_uri
 
+      REQUEST_AUTHORIZE_PARAMS = %w[team].freeze
+
       def self.generate_uid(team_id, user_id)
         "#{user_id}-#{team_id}"
       end
@@ -64,6 +66,15 @@ module OmniAuth
             ),
           raw_info: raw_info
         }
+      end
+
+      def authorize_params
+        super.tap do |params|
+          REQUEST_AUTHORIZE_PARAMS.each do |key|
+            value = request.params[key].to_s
+            params[key.to_sym] = value unless value.empty?
+          end
+        end
       end
 
       def callback_url
