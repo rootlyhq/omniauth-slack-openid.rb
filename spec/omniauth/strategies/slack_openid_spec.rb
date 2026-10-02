@@ -69,6 +69,40 @@ describe OmniAuth::Strategies::SlackOpenid do
     it { expect(subject).to eq('U0R7JM-T0R7GR') }
   end
 
+  describe '#authorize_params' do
+    let(:request_params) { {} }
+
+    before do
+      allow(strategy).to receive(:session) { {} }
+      allow(strategy).to receive(:request) { double('Request', params: request_params) }
+    end
+
+    subject { strategy.authorize_params }
+
+    context 'with a team request param' do
+      let(:request_params) { { 'team' => 'T0R7GR' } }
+
+      it { expect(subject[:team]).to eq('T0R7GR') }
+    end
+
+    context 'without a team request param' do
+      it { expect(subject).not_to have_key(:team) }
+    end
+
+    context 'with an empty team request param' do
+      let(:request_params) { { 'team' => '' } }
+
+      it { expect(subject).not_to have_key(:team) }
+    end
+
+    it 'does not leak the team into the shared strategy options' do
+      allow(strategy).to receive(:request) { double('Request', params: { 'team' => 'T0R7GR' }) }
+      strategy.authorize_params
+
+      expect(strategy.options.authorize_params).not_to have_key(:team)
+    end
+  end
+
   describe '#callback_url' do
     let(:base_url) { 'https://example.com' }
 
